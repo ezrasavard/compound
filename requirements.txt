@@ -1,0 +1,4 @@
+nose
+argparse
+mongoengine
+matplotlib
