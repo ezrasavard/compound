@@ -22,7 +22,7 @@ def run_query(args):
 
 # timestamp generator for argument type
 def timestamp(datestring):
-    return datetime.datetime.strptime(datestring, '%Y-%m-%d')
+    return datetime.datetime.strptime(datestring, config.time_format)
 
 parser = argparse.ArgumentParser()
 # the 'dest' argument is required due to a bug in argparse in Python3

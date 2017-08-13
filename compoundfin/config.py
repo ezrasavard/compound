@@ -15,3 +15,5 @@ EXCHANGE_RATES = {
         "CAD": {"CAD": 1.00, "USD": 0.80},
         "USD": {"CAD": 1.25, "USD": 1.00},
         }
+
+time_format = '%Y-%m-%d'
