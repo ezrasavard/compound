@@ -41,11 +41,7 @@ query_parser.add_argument('--convert-currencies',
         help=('convert all transactions to one currency at the rate specified'
               ' in the configuration file'),
         default="CAD",
-        choices=mapper.Transaction.CURRENCIES)
-
-query_parser.add_argument('--account',
-        help=('Filter to the specified account by name or the final four'
-              ' digits of the account number'))
+        choices=mapper.Account.CURRENCIES)
 
 query_parser.add_argument('--plot',
         help='Writes data as a pie chart to the specified output file')
