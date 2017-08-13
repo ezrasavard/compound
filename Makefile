@@ -5,4 +5,4 @@ test:
 	python3 -m nose tests
 
 style:
-	pep8 --first --show-source *.py
+	pep8 . --first --show-source
