@@ -27,7 +27,7 @@ class TestQueryCommand(CommandTest):
     def test_default_end_date(self):
         command = 'query --start 2016-01-31'
         args = self.parser.parse_args(command.split())
-        self.assertEquals(args.END_DATE.date(), datetime.date.today())
+        self.assertEquals(args.end_date.date(), datetime.date.today())
 
     def test_multiple_categories(self):
         command = 'query --start 2016-01-31 --categories Groceries Healthcare'

@@ -1,8 +1,26 @@
+import config
 import mapper
+import query
 
 import argparse
 import datetime
+import mongoengine as mdb
 import sys
+
+
+def run_query(args):
+    print("Executing query...")
+    client = mdb.connect(config.DB_NAME)
+    transaction_query = query.Transactions()
+    transaction_query.start_date = args.start_date
+    transaction_query.end_date = args.end_date
+    transaction_query.category_filters = args.categories
+    transaction_query.currency_target = args.convert_currencies
+    transaction_query.plot_output_file = args.plot
+    transaction_query.csv_output_file = args.csv
+    results = transaction_query.execute()
+    print("Query complete:")
+    print(results)
 
 
 # timestamp generator for argument type
@@ -10,7 +28,9 @@ def timestamp(datestring):
     return datetime.datetime.strptime(datestring, '%Y-%m-%d')
 
 parser = argparse.ArgumentParser()
-subparsers = parser.add_subparsers(help='Commands')
+# the 'dest' argument is required due to a bug in argparse in Python3
+subparsers = parser.add_subparsers(dest='command', help='Commands')
+subparsers.required = True
 
 # TODO: Implement "fetch" command
 # fetch_parser = subparsers.add_parser('fetch',
@@ -20,16 +40,18 @@ query_parser = subparsers.add_parser('query',
         help=('Query the database, filter and specify output methods using'
               ' the command arguments'))
 
+query_parser.set_defaults(func=run_query)
+
 query_parser.add_argument('--start',
         help='start date (inclusive), YYYY-MM-DD',
         type=timestamp,
-        dest='START_DATE',
+        dest='start_date',
         required=True)
 
 query_parser.add_argument('--end',
         help='end date (exclusive), YYYY-MM-DD',
         type=timestamp,
-        dest='END_DATE',
+        dest='end_date',
         default=datetime.datetime.today())
 
 query_parser.add_argument('--categories',
@@ -40,7 +62,6 @@ query_parser.add_argument('--categories',
 query_parser.add_argument('--convert-currencies',
         help=('convert all transactions to one currency at the rate specified'
               ' in the configuration file'),
-        default="CAD",
         choices=mapper.Account.CURRENCIES)
 
 query_parser.add_argument('--plot',
@@ -51,5 +72,5 @@ query_parser.add_argument('--csv',
 
 
 def run():
-    parser.parse_args(sys.argv[1:])
-    print(parser)
+    args = parser.parse_args(sys.argv[1:])
+    args.func(args)
