@@ -1,4 +1,5 @@
 import config
+
 import mongoengine as mdb
 
 
@@ -99,6 +100,7 @@ class Transaction(mdb.Document):
     @staticmethod
     def query(start_date, end_date, category_filters=None,
             currency_target=None):
+        """Returns a list of filtered and mutated objects"""
 
         if category_filters:
             categories = CategoryMap.objects(
@@ -117,6 +119,7 @@ class Transaction(mdb.Document):
             if target is not None:
                 rate = config.EXCHANGE_RATES[target][row.currency]
                 row.amount *= rate
+                row.currency = target
             return row
 
         return [_convert_currency(currency_target, x) for x in results]
