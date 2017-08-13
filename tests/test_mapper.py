@@ -6,6 +6,7 @@ import mongoengine as mdb
 import unittest
 import uuid
 
+
 class TestMapper(unittest.TestCase):
 
     @classmethod

@@ -1,11 +1,11 @@
 import mongoengine as mdb
 
 
-"""
-Stores historical mapping of merchant category codes
-to human readable categories
-"""
 class CategoryMap(mdb.Document):
+    """
+    Stores historical mapping of merchant category codes
+    to human readable categories
+    """
 
     CATEGORIES = (
             "Groceries",
@@ -25,8 +25,8 @@ class CategoryMap(mdb.Document):
     category = mdb.StringField(required=True, choices=CATEGORIES)
 
 
-"""Describes a single transaction event"""
 class Transaction(mdb.Document):
+    """Describes a single transaction event"""
 
     CURRENCIES = (
             "CAD",
@@ -35,7 +35,7 @@ class Transaction(mdb.Document):
 
     # dollar amount in specified currency
     amount = mdb.DecimalField(required=True)
-    
+
     # three letter currency code
     currency = mdb.StringField(required=True, max_length=3,
             choices=CURRENCIES)
@@ -56,4 +56,3 @@ class Transaction(mdb.Document):
             'ordering': ['-date'],
             'indexes': ['date'],
            }
-
