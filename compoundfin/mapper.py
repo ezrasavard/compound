@@ -19,10 +19,10 @@ class CategoryMap(mdb.Document):
             )
 
     # IRS merchant category code
-    category_code = mdb.IntField(required=False, max_length=4)
+    code = mdb.IntField(required=False, max_length=4)
 
     # category name (human readable)
-    category = mdb.StringField(required=True, choices=CATEGORIES)
+    description = mdb.StringField(required=True, choices=CATEGORIES)
 
 
 class Transaction(mdb.Document):

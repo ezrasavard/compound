@@ -25,8 +25,8 @@ class TestMapper(unittest.TestCase):
 
     def test_category_insertion_and_retrieval(self):
         row = mapper.CategoryMap()
-        row.category = "Groceries"
-        row.category_code = 9999
+        row.description = "Groceries"
+        row.code = 9999
         row.no_cache = True
         row.save()
 
@@ -38,8 +38,8 @@ class TestMapper(unittest.TestCase):
     def test_database_dropping(self):
         self.client.drop_database(self.db_name)
         row = mapper.CategoryMap()
-        row.category = "Groceries"
-        row.category_code = 1
+        row.description = "Groceries"
+        row.code = 1
         row.no_cache = True
         row.save()
         self.assertEqual(mapper.CategoryMap.objects().count(), 1)
@@ -47,8 +47,8 @@ class TestMapper(unittest.TestCase):
 
         self.assertEqual(mapper.CategoryMap.objects().count(), 0)
         row = mapper.CategoryMap()
-        row.category = "Groceries"
-        row.category_code = 2
+        row.description = "Groceries"
+        row.code = 2
         row.no_cache = True
         row.save()
         self.assertEqual(mapper.CategoryMap.objects().count(), 1)
@@ -56,13 +56,13 @@ class TestMapper(unittest.TestCase):
 
     def test_category_invalid(self):
         row = mapper.CategoryMap()
-        row.category = "foobar"
+        row.description = "foobar"
         self.assertRaises(mdb.ValidationError, row.save)
 
     def test_transaction_insertion_and_retrieval(self):
         row = mapper.CategoryMap()
-        row.category = "Costco"
-        row.category_code = 1234
+        row.description = "Costco"
+        row.code = 1234
         row.save()
         row.no_cache = True
         self.assertTrue(row in mapper.CategoryMap.objects())
