@@ -1,6 +1,5 @@
 import config
 import mapper
-import query
 
 import argparse
 import datetime
@@ -11,16 +10,14 @@ import sys
 def run_query(args):
     print("Executing query...")
     client = mdb.connect(config.DB_NAME)
-    transaction_query = query.Transactions()
-    transaction_query.start_date = args.start_date
-    transaction_query.end_date = args.end_date
-    transaction_query.category_filters = args.categories
-    transaction_query.currency_target = args.convert_currencies
-    transaction_query.plot_output_file = args.plot
-    transaction_query.csv_output_file = args.csv
-    results = transaction_query.execute()
+    results = mapper.Transaction.query(start_date=args.start_date,
+            end_date=args.end_date,
+            category_filters=args.categories,
+            currency_target=args.convert_currencies)
+
     print("Query complete:")
     print(results)
+    # TODO do output stuff here with CSV and plotting
 
 
 # timestamp generator for argument type

@@ -1,3 +1,4 @@
+import config
 import mongoengine as mdb
 
 
@@ -94,3 +95,28 @@ class Transaction(mdb.Document):
             'ordering': ['-date'],
             'indexes': ['date'],
            }
+
+    @staticmethod
+    def query(start_date, end_date, category_filters=None,
+            currency_target=None):
+
+        if category_filters:
+            categories = CategoryMap.objects(
+                    description__in=category_filters)
+
+            results = Transaction.objects(
+                    date__gte=start_date,
+                    date__lt=end_date,
+                    category__in=categories)
+        else:
+            results = Transaction.objects(
+                    date__gte=start_date,
+                    date__lt=end_date)
+
+        def _convert_currency(target, row):
+            if target is not None:
+                rate = config.EXCHANGE_RATES[target][row.currency]
+                row.amount *= rate
+            return row
+
+        return [_convert_currency(currency_target, x) for x in results]
