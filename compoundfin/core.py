@@ -68,6 +68,16 @@ query_parser.add_argument('--csv',
         help='Writes data in CSV format to the specified output file')
 
 
+class Application:
+
+    def __init__(self, db_name=None):
+        """Class exists to bind the application to a Mongo Database"""
+        if db_name is None:
+            db_name = config.DB_NAME
+        self.client = mdb.connect(db_name)
+
+
 def run():
     args = parser.parse_args(sys.argv[1:])
+    app = Application()
     args.func(args)
