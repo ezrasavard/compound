@@ -97,6 +97,27 @@ class Transaction(mdb.Document):
             'indexes': ['date'],
            }
 
+    def csv_row(self):
+        return ",".join([
+                self.date.strftime(config.time_format),
+                self.category.description,
+                self.account.description,
+                self.description,
+                '{:.2f}'.format(self.amount),
+                self.currency,
+                ]) + '\n'
+
+    @staticmethod
+    def csv_header():
+        return ",".join([
+                'date (YYYY-MM-DD)',
+                'category',
+                'account',
+                'description',
+                'amount',
+                'currency',
+                ]) + '\n'
+
     @staticmethod
     def query(start_date, end_date, category_filters=None,
             currency_target=None):

@@ -1,5 +1,6 @@
 import config
 import mapper
+import output
 
 import argparse
 import datetime
@@ -8,16 +9,29 @@ import sys
 
 
 def run_query(args):
-    print("Executing query...")
-    client = mdb.connect(config.DB_NAME)
-    results = mapper.Transaction.query(start_date=args.start_date,
+    print('Executing query...')
+    data = mapper.Transaction.query(start_date=args.start_date,
             end_date=args.end_date,
             category_filters=args.categories,
             currency_target=args.convert_currencies)
 
-    print("Query complete:")
-    print(results)
-    # TODO do output stuff here with CSV and plotting
+    print('Query complete:')
+    print(data)
+
+    if args.raw_csv:
+        print('Writing raw data to csv: {}'.format(args.raw_csv))
+        output.transaction_data_csv(data, args.raw_csv)
+
+    if args.csv:
+        print('Writing aggregated data to csv: {}'.format(args.csv))
+        output.transaction_data_by_category_csv(data, args.csv)
+
+    if args.plot:
+        print('Plotting aggregated data to: {}'.format(args.plot))
+        title = 'Transactions by Category\n{} to {}'.format(
+                args.start_date.strftime(config.time_format),
+                args.end_date.strftime(config.time_format))
+        output.transaction_data_by_category_pie_chart(data, args.plot, title)
 
 
 # timestamp generator for argument type
@@ -62,9 +76,16 @@ query_parser.add_argument('--convert-currencies',
         choices=mapper.Account.CURRENCIES)
 
 query_parser.add_argument('--plot',
-        help='Writes data as a pie chart to the specified output file')
+        help=('Writes category aggregated data as a pie chart to the specified'
+              ' output file. The option "--convert-currencies" must be used'
+              ' with this option'))
 
 query_parser.add_argument('--csv',
+        help=('Writes category aggregated data in CSV format to the specified'
+              ' output file. The option "--convert-currencies" must be used'
+              ' with this option'))
+
+query_parser.add_argument('--raw-csv',
         help='Writes data in CSV format to the specified output file')
 
 
