@@ -2,3 +2,5 @@ nose
 argparse
 mongoengine
 matplotlib
+selenium
+-e git+git://github.com/lsav/lastpass-python#egg=lastpass
