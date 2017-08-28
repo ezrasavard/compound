@@ -37,6 +37,7 @@ class TestOutput(util.DBTest):
         args.func(args)
         csv_written = tmp.readlines()
         print('csv content: {}'.format(csv_written))
+        # header row and three data rows
         self.assertEquals(len(csv_written), 4)
 
     def test_transaction_by_category_csv(self):
