@@ -32,14 +32,14 @@ class DBTest(unittest.TestCase):
                 description="rbc debit card",
                 native_currency="CAD")
 
-        cls.CATEGORY_GROCERIES = mapper.CategoryMap(description="Groceries",
-                code=1)
+        cls.CATEGORY_GROCERIES = mapper.CategoryMap(category="Groceries",
+                merchant="Spam and More Spam")
 
-        cls.CATEGORY_HEALTHCARE = mapper.CategoryMap(description="Healthcare",
-                code=2)
+        cls.CATEGORY_HEALTHCARE = mapper.CategoryMap(category="Healthcare",
+                merchant="Foo's Medical Services")
 
-        cls.CATEGORY_DINING = mapper.CategoryMap(description="Dining",
-                code=3)
+        cls.CATEGORY_DINING = mapper.CategoryMap(category="Dining",
+                merchant="Spam and Eggs Only Diner")
 
         cls.DATE1 = core.timestamp("1970-01-01")
         cls.DATE2 = core.timestamp("1970-01-02")

@@ -4,10 +4,7 @@ import mongoengine as mdb
 
 
 class CategoryMap(mdb.Document):
-    """
-    Stores historical mapping of merchant category codes
-    to human readable categories
-    """
+    """Stores mapping of merchant to human readable category"""
 
     CATEGORIES = (
             "Groceries",
@@ -18,13 +15,12 @@ class CategoryMap(mdb.Document):
             "Shopping",
             "Healthcare",
             "Bills",
+            "TBD",
             )
 
-    # IRS merchant category code
-    code = mdb.IntField(required=False, max_length=4)
+    category = mdb.StringField(required=True, choices=CATEGORIES)
 
-    # category name (human readable)
-    description = mdb.StringField(required=True, choices=CATEGORIES)
+    merchant = mdb.StringField(required=True, max_length=80)
 
 
 class Account(mdb.Document):
@@ -100,7 +96,7 @@ class Transaction(mdb.Document):
     def csv_row(self):
         return ",".join([
                 self.date.strftime(config.time_format),
-                self.category.description,
+                self.category.category,
                 self.account.description,
                 self.description,
                 '{:.2f}'.format(self.amount),
@@ -125,7 +121,7 @@ class Transaction(mdb.Document):
 
         if category_filters:
             categories = CategoryMap.objects(
-                    description__in=category_filters)
+                    category__in=category_filters)
 
             results = Transaction.objects(
                     date__gte=start_date,

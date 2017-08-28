@@ -11,8 +11,8 @@ class TestMapper(util.DBTest):
 
     def test_category_insertion_and_retrieval(self):
         row = mapper.CategoryMap()
-        row.description = "Groceries"
-        row.code = 9999
+        row.category = "Groceries"
+        row.merchant = "Foobar's Vegetables"
         row.no_cache = True
         row.save()
 
@@ -23,13 +23,13 @@ class TestMapper(util.DBTest):
 
     def test_category_invalid(self):
         row = mapper.CategoryMap()
-        row.description = "foobar"
+        row.category = "foobar"
         self.assertRaises(mdb.ValidationError, row.save)
 
     def test_transaction_insertion_and_retrieval(self):
         row = mapper.CategoryMap()
-        row.description = "Costco"
-        row.code = 1234
+        row.category = "Costco"
+        row.merchant = "CostcoPurchaseSomethingSomething"
         row.save()
         row.no_cache = True
         self.assertTrue(row in mapper.CategoryMap.objects())
@@ -76,12 +76,12 @@ class TestMapper(util.DBTest):
     def test_transaction_query_category_filtering(self):
         results = mapper.Transaction.query(start_date=self.DATE1,
                 end_date=self.DATE4,
-                category_filters=[self.CATEGORY_GROCERIES.description])
+                category_filters=[self.CATEGORY_GROCERIES.category])
         self.assertEquals(len(results), 1)
 
     def test_transaction_query_multi_category_filtering(self):
         results = mapper.Transaction.query(start_date=self.DATE1,
                 end_date=self.DATE4,
-                category_filters=[self.CATEGORY_GROCERIES.description,
-                    self.CATEGORY_HEALTHCARE.description])
+                category_filters=[self.CATEGORY_GROCERIES.category,
+                    self.CATEGORY_HEALTHCARE.category])
         self.assertEquals(len(results), 2)
