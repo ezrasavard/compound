@@ -39,14 +39,12 @@ class TestMapper(util.DBTest):
         account.card_type = "MASTERCARD"
         account.last_four = "1234"
         account.description = "foobarz card"
-        account.native_currency = "CAD"
         account.no_cache = True
         account.save()
         self.assertTrue(account in mapper.Account.objects())
 
         trans = mapper.Transaction()
         trans.amount = -13.37
-        trans.currency = "CAD"
         trans.account = account
         trans.date = datetime.datetime.now
         trans.description = "stuff"

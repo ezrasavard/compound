@@ -60,11 +60,5 @@ class TestOutput(util.DBTest):
     def test_image_formats(self):
         pass
 
-    def test_validate_single_currency(self):
-        pass
-
-    def test_currency_conversion(self):
-        pass
-
     def test_aggregate_transactions_by_category(self):
         pass

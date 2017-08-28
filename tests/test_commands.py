@@ -35,8 +35,8 @@ class TestQueryCommand(CommandTest):
         self.assertTrue("Groceries" in args.categories)
         self.assertTrue("Healthcare" in args.categories)
 
-    def test_rejects_unknown_currency(self):
-        command = 'query --start 2016-01-31 --convert-currency RMB'
+    def test_rejects_unknown_category(self):
+        command = 'query --start 2016-01-31 --categories MysteryCategory'
         with self.assertRaises(SystemExit) as e:
             self.parser.parse_args(command.split())
         self.assertEquals(e.exception.code, 2)

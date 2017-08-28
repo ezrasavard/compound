@@ -49,11 +49,6 @@ class Account(mdb.Document):
             "DEBIT",
             }
 
-    CURRENCIES = (
-            "CAD",
-            "USD",
-            )
-
     # Financial institution backing the account
     bank = mdb.StringField(required=True, choices=BANKS)
 
@@ -69,20 +64,12 @@ class Account(mdb.Document):
     # descriptive information like "Costco" or "Amazon Canadian Visa"
     description = mdb.StringField(max_length=80)
 
-    # native currency for the card
-    native_currency = mdb.StringField(required=True, max_length=3,
-            choices=CURRENCIES)
-
 
 class Transaction(mdb.Document):
     """Describes a single transaction event"""
 
-    # dollar amount in specified currency
+    # dollar amount
     amount = mdb.DecimalField(required=True)
-
-    # three letter currency code
-    currency = mdb.StringField(required=True, max_length=3,
-            choices=Account.CURRENCIES)
 
     # descriptive account name (human readable)
     account = mdb.ReferenceField(Account, required=True)
@@ -108,7 +95,6 @@ class Transaction(mdb.Document):
                 self.account.description,
                 self.description,
                 '{:.2f}'.format(self.amount),
-                self.currency,
                 ]) + '\n'
 
     @staticmethod
@@ -119,12 +105,10 @@ class Transaction(mdb.Document):
                 'account',
                 'description',
                 'amount',
-                'currency',
                 ]) + '\n'
 
     @staticmethod
-    def query(start_date, end_date, category_filters=None,
-            currency_target=None):
+    def query(start_date, end_date, category_filters=None):
         """Returns a list of filtered and mutated objects"""
 
         if category_filters:
@@ -140,11 +124,4 @@ class Transaction(mdb.Document):
                     date__gte=start_date,
                     date__lt=end_date)
 
-        def _convert_currency(target, row):
-            if target is not None:
-                rate = config.EXCHANGE_RATES[target][row.currency]
-                row.amount *= rate
-                row.currency = target
-            return row
-
-        return [_convert_currency(currency_target, x) for x in results]
+        return results

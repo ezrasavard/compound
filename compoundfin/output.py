@@ -36,32 +36,22 @@ def _aggregate_transactions_by_category(data):
     return agg
 
 
-def _validate_single_currency(data):
-    currencies = set([x.currency for x in data])
-    if len(currencies) != 1:
-        raise ValueError('Data must use a single currency, received: {}'
-                .format(currencies))
-
-    return currencies.pop()
-
-
 def transaction_data_by_category_csv(data, outfile):
     """
     Make a CSV aggregating the transaction data by category
 
-    @param data: a list of mapper.Transaction objects in a single currency
+    @param data: a list of mapper.Transaction objects
     @param outfile: string designating the desired output file to write
     """
 
-    currency = _validate_single_currency(data)
     with open(outfile, 'w') as f:
         f.write('category,budget,spent\n')
         aggs = _aggregate_transactions_by_category(data)
         for category, quantities in aggs.items():
             spent = -1 * quantities['amount']
             budget = quantities.get('budget', 0.0)
-            f.write('{}, {:.2f}, {:.2f} {}\n'
-                    .format(category, budget, spent, currency))
+            f.write('{}, {:.2f}, {:.2f}\n'
+                    .format(category, budget, spent))
 
 
 def transaction_data_by_category_pie_chart(data, outfile, title):
@@ -70,12 +60,11 @@ def transaction_data_by_category_pie_chart(data, outfile, title):
     The image format will be interpreted from the file extension
     See SUPPORTED_IMAGE_FORMATS for options
 
-    @param data: a list of mapper.Transaction objects in a single currency
+    @param data: a list of mapper.Transaction objects
     @param outfile: string designating the desired output file to write
     @param title: string to use at the title in the image
     """
 
-    currency = _validate_single_currency(data)
     image_format = os.path.splittext(outfile)[1][1:]
 
     if image_format not in SUPPORTED_IMAGE_FORMATS:
@@ -89,7 +78,7 @@ def transaction_data_by_category_pie_chart(data, outfile, title):
     sizes = []
     for label, qty in agg.items():
         spent = -1 * qty['amount']
-        labels.append('{}: ${:.0f} {}'.format(label, spent, currency))
+        labels.append('{}: ${:.0f}'.format(label, spent))
         sizes.append(int(spent))
 
     plt.pie(sizes, labels=labels, shadow=True)

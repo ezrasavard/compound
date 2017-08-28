@@ -19,18 +19,15 @@ class DBTest(unittest.TestCase):
         cls.ACCOUNT1 = mapper.Account(bank="CapitalOne",
                 card_type="MASTERCARD",
                 last_four="1234",
-                description="foobarz card",
-                native_currency="CAD")
+                description="foobarz card")
         cls.ACCOUNT2 = mapper.Account(bank="Tangerine",
                 card_type="DEBIT",
                 last_four="9999",
-                description="my debit card",
-                native_currency="CAD")
+                description="my debit card")
         cls.ACCOUNT3 = mapper.Account(bank="RBC",
                 card_type="DEBIT",
                 last_four="1111",
-                description="rbc debit card",
-                native_currency="CAD")
+                description="rbc debit card")
 
         cls.CATEGORY_GROCERIES = mapper.Category(label="Groceries",
                 budget=600.00)
@@ -45,21 +42,18 @@ class DBTest(unittest.TestCase):
         cls.DATE4 = core.timestamp("1970-01-04")
 
         cls.TRANSACTION1 = mapper.Transaction(amount=-10,
-                currency="CAD",
                 account=cls.ACCOUNT1,
                 date=cls.DATE1,
                 category=cls.CATEGORY_GROCERIES,
                 description="transaction 1")
 
         cls.TRANSACTION2 = mapper.Transaction(amount=-20,
-                currency="CAD",
                 account=cls.ACCOUNT2,
                 date=cls.DATE2,
                 category=cls.CATEGORY_HEALTHCARE,
                 description="transaction 2")
 
         cls.TRANSACTION3 = mapper.Transaction(amount=-30,
-                currency="USD",
                 account=cls.ACCOUNT3,
                 date=cls.DATE3,
                 category=cls.CATEGORY_DINING,

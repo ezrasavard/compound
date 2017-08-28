@@ -12,8 +12,7 @@ def run_query(args):
     print('Executing query...')
     data = mapper.Transaction.query(start_date=args.start_date,
             end_date=args.end_date,
-            category_filters=args.categories,
-            currency_target=args.convert_currencies)
+            category_filters=args.categories)
 
     print('Query complete:')
     print(data)
@@ -70,20 +69,13 @@ query_parser.add_argument('--categories',
         nargs='*',
         choices=mapper.Category.CATEGORIES)
 
-query_parser.add_argument('--convert-currencies',
-        help=('convert all transactions to one currency at the rate specified'
-              ' in the configuration file'),
-        choices=mapper.Account.CURRENCIES)
-
 query_parser.add_argument('--plot',
         help=('Writes category aggregated data as a pie chart to the specified'
-              ' output file. The option "--convert-currencies" must be used'
-              ' with this option'))
+              ' output file.'))
 
 query_parser.add_argument('--csv',
         help=('Writes category aggregated data in CSV format to the specified'
-              ' output file. The option "--convert-currencies" must be used'
-              ' with this option'))
+              ' output file.'))
 
 query_parser.add_argument('--raw-csv',
         help='Writes data in CSV format to the specified output file')
