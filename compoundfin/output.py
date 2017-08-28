@@ -29,10 +29,11 @@ def _aggregate_transactions_by_category(data):
 
     agg = {x: {'amount': 0.0} for x in mapper.Category.CATEGORIES}
     for row in data:
-        agg[row.category.label]['amount'] += row.amount
-        agg[row.category.label]['budget'] = row.category.budget
+        agg[row.category.label]['amount'] += float(row.amount)
+        if row.category.budget is not None:
+            agg[row.category.label]['budget'] = float(row.category.budget)
 
-    return sorted(agg)
+    return agg
 
 
 def _validate_single_currency(data):
@@ -41,7 +42,7 @@ def _validate_single_currency(data):
         raise ValueError('Data must use a single currency, received: {}'
                 .format(currencies))
 
-    return currencies[0]
+    return currencies.pop()
 
 
 def transaction_data_by_category_csv(data, outfile):
@@ -54,13 +55,13 @@ def transaction_data_by_category_csv(data, outfile):
 
     currency = _validate_single_currency(data)
     with open(outfile, 'w') as f:
-        f.write('category,amount')
+        f.write('category,budget,spent\n')
         aggs = _aggregate_transactions_by_category(data)
         for category, quantities in aggs.items():
-            amount = quantities['amount']
-            budget = quantities['budget']
-            f.write('{}, {:.2f}, {:.2f} {}'
-                    .format(category, budget, amount, currency))
+            spent = -1 * quantities['amount']
+            budget = quantities.get('budget', 0.0)
+            f.write('{}, {:.2f}, {:.2f} {}\n'
+                    .format(category, budget, spent, currency))
 
 
 def transaction_data_by_category_pie_chart(data, outfile, title):
@@ -87,9 +88,9 @@ def transaction_data_by_category_pie_chart(data, outfile, title):
     labels = []
     sizes = []
     for label, qty in agg.items():
-        amount = qty['amount']
-        labels.append('{}: ${:.0f} {}'.format(label, amount, currency))
-        sizes.append(int(amount))
+        spent = -1 * qty['amount']
+        labels.append('{}: ${:.0f} {}'.format(label, spent, currency))
+        sizes.append(int(spent))
 
     plt.pie(sizes, labels=labels, shadow=True)
     plt.axis('equal')
