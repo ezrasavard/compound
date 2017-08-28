@@ -3,8 +3,8 @@ import config
 import mongoengine as mdb
 
 
-class CategoryMap(mdb.Document):
-    """Stores mapping of merchant to human readable category"""
+class Category(mdb.Document):
+    """Stores a category label and its optional budget"""
 
     CATEGORIES = (
             "Groceries",
@@ -18,7 +18,15 @@ class CategoryMap(mdb.Document):
             "TBD",
             )
 
-    category = mdb.StringField(required=True, choices=CATEGORIES)
+    label = mdb.StringField(required=True, choices=CATEGORIES)
+
+    budget = mdb.DecimalField(required=False)
+
+
+class CategoryMap(mdb.Document):
+    """Stores mapping of merchant to category"""
+
+    category = mdb.ReferenceField(Category, required=True)
 
     merchant = mdb.StringField(required=True, max_length=80)
 
@@ -85,7 +93,7 @@ class Transaction(mdb.Document):
     # full description either from original statement or provided by user
     description = mdb.StringField(required=False, max_length=80)
 
-    category = mdb.ReferenceField(CategoryMap)
+    category = mdb.ReferenceField(Category)
 
     # TODO - not sure if this date index works
     meta = {
@@ -96,7 +104,7 @@ class Transaction(mdb.Document):
     def csv_row(self):
         return ",".join([
                 self.date.strftime(config.time_format),
-                self.category.category,
+                self.category.label,
                 self.account.description,
                 self.description,
                 '{:.2f}'.format(self.amount),
@@ -120,8 +128,8 @@ class Transaction(mdb.Document):
         """Returns a list of filtered and mutated objects"""
 
         if category_filters:
-            categories = CategoryMap.objects(
-                    category__in=category_filters)
+            categories = Category.objects(
+                    label__in=category_filters)
 
             results = Transaction.objects(
                     date__gte=start_date,

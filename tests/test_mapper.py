@@ -9,9 +9,9 @@ import mongoengine as mdb
 
 class TestMapper(util.DBTest):
 
-    def test_category_insertion_and_retrieval(self):
+    def test_category_map_insertion_and_retrieval(self):
         row = mapper.CategoryMap()
-        row.category = "Groceries"
+        row.category = self.CATEGORY_GROCERIES
         row.merchant = "Foobar's Vegetables"
         row.no_cache = True
         row.save()
@@ -22,14 +22,14 @@ class TestMapper(util.DBTest):
         self.assertTrue(row in mapper.CategoryMap.objects())
 
     def test_category_invalid(self):
-        row = mapper.CategoryMap()
+        row = mapper.Category()
         row.category = "foobar"
         self.assertRaises(mdb.ValidationError, row.save)
 
     def test_transaction_insertion_and_retrieval(self):
         row = mapper.CategoryMap()
-        row.category = "Costco"
-        row.merchant = "CostcoPurchaseSomethingSomething"
+        row.category = self.CATEGORY_GROCERIES
+        row.merchant = "PurchaseSomethingSomething"
         row.save()
         row.no_cache = True
         self.assertTrue(row in mapper.CategoryMap.objects())
@@ -50,7 +50,7 @@ class TestMapper(util.DBTest):
         trans.account = account
         trans.date = datetime.datetime.now
         trans.description = "stuff"
-        trans.category = row
+        trans.category = self.CATEGORY_GROCERIES
         trans.no_cache = True
         trans.save()
 
@@ -76,12 +76,12 @@ class TestMapper(util.DBTest):
     def test_transaction_query_category_filtering(self):
         results = mapper.Transaction.query(start_date=self.DATE1,
                 end_date=self.DATE4,
-                category_filters=[self.CATEGORY_GROCERIES.category])
+                category_filters=[self.CATEGORY_GROCERIES.label])
         self.assertEquals(len(results), 1)
 
     def test_transaction_query_multi_category_filtering(self):
         results = mapper.Transaction.query(start_date=self.DATE1,
                 end_date=self.DATE4,
-                category_filters=[self.CATEGORY_GROCERIES.category,
-                    self.CATEGORY_HEALTHCARE.category])
+                category_filters=[self.CATEGORY_GROCERIES.label,
+                    self.CATEGORY_HEALTHCARE.label])
         self.assertEquals(len(results), 2)

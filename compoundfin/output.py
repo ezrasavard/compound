@@ -27,9 +27,10 @@ def transaction_data_csv(data, outfile):
 def _aggregate_transactions_by_category(data):
     """Reduce all transactions to a single sum for each category"""
 
-    agg = {x: 0.0 for x in mapper.CategoryMap.CATEGORIES}
+    agg = {x: {'amount': 0.0} for x in mapper.Category.CATEGORIES}
     for row in data:
-        agg[row.category.description] += row.amount
+        agg[row.category.label]['amount'] += row.amount
+        agg[row.category.label]['budget'] = row.category.budget
 
     return sorted(agg)
 
@@ -54,8 +55,12 @@ def transaction_data_by_category_csv(data, outfile):
     currency = _validate_single_currency(data)
     with open(outfile, 'w') as f:
         f.write('category,amount')
-        for category, amount in _aggregate_transactions_by_category(data):
-            f.write('{},{:.2f} {}'.format(category, amount, currency))
+        aggs = _aggregate_transactions_by_category(data)
+        for category, quantities in aggs.items():
+            amount = quantities['amount']
+            budget = quantities['budget']
+            f.write('{}, {:.2f}, {:.2f} {}'
+                    .format(category, budget, amount, currency))
 
 
 def transaction_data_by_category_pie_chart(data, outfile, title):
@@ -78,8 +83,13 @@ def transaction_data_by_category_pie_chart(data, outfile, title):
                               SUPPORTED_IMAGE_FORMATS))
 
     agg = _aggregate_transactions_by_category(data)
-    labels = [x[0] for x in agg]
-    sizes = ['${} {}'.format(int(x[1]), currency) for x in agg]
+
+    labels = []
+    sizes = []
+    for label, qty in agg.items():
+        amount = qty['amount']
+        labels.append('{}: ${:.0f} {}'.format(label, amount, currency))
+        sizes.append(int(amount))
 
     plt.pie(sizes, labels=labels, shadow=True)
     plt.axis('equal')

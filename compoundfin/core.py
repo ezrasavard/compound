@@ -68,7 +68,7 @@ query_parser.add_argument('--end',
 query_parser.add_argument('--categories',
         help='space separated list of categories to filter to',
         nargs='*',
-        choices=mapper.CategoryMap.CATEGORIES)
+        choices=mapper.Category.CATEGORIES)
 
 query_parser.add_argument('--convert-currencies',
         help=('convert all transactions to one currency at the rate specified'
